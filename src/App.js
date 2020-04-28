@@ -1,25 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import ColorList from "./ColorList";
+import Color from "./Color";
+import { Route, BrowserRouter, Switch, Redirect } from "react-router-dom";
+import AddColorForm from "./AddColorForm";
+import uuid from "uuid/v4";
 
 function App() {
+  const [colors, setColors] = useState([
+    { colorName: "black", color: "black", id: 1 },
+  ]);
+  const addColor = (color) => {
+    let newColor = { ...color, id: uuid() };
+    setColors((colors) => {
+      let colorsCopy = [...colors];
+      colorsCopy.unshift(newColor);
+      return colorsCopy;
+    });
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/colors">
+          <ColorList colors={colors} />
+        </Route>
+        <Route exact path="/colors/new">
+          <AddColorForm addColor={addColor} />
+        </Route>
+        <Route exact path="/colors/:paramColor">
+          <Color colors={colors} />
+        </Route>
+        <Redirect to="/colors" />
+      </Switch>
+    </BrowserRouter>
   );
 }
 
